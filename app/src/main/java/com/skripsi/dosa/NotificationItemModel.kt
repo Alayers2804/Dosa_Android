@@ -2,10 +2,14 @@ package com.skripsi.dosa
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-data class NotificationItemModel(val tag: String?, val title: String?, val text: String?, val postTime: String?, val packageName: String?) :
+@Entity
+data class NotificationItemModel(@PrimaryKey(autoGenerate = true) val id: Long = 0, val tag: String?, val title: String?, val text: String?, val postTime: String?, val packageName: String?) :
     Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readLong(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -16,6 +20,7 @@ data class NotificationItemModel(val tag: String?, val title: String?, val text:
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeLong(id)
         parcel.writeString(tag)
         parcel.writeString(title)
         parcel.writeString(text)
