@@ -11,6 +11,7 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -56,6 +57,7 @@ class NotificationService: NotificationListenerService() {
                                 .setContentTitle("Dangerous Message !! Please be aware !!!")
                                 .setContentText(text)
                                 .setPriority(NotificationCompat.PRIORITY_MAX)
+
                             val mNotificationManager: NotificationManager = this.getSystemService(
                                 NOTIFICATION_SERVICE
                             ) as NotificationManager
@@ -98,15 +100,14 @@ class NotificationService: NotificationListenerService() {
 
     private fun onNewNotification(notificationData: NotificationItemModel) {
         Log.i("NotificationService", "New Notification has been posted: $notificationData")
-        val intent = Intent().apply {
-            action = ACTION_NEW_NOTIFICATION
+        val intent = Intent(NotificationService.ACTION_NEW_NOTIFICATION).apply {
             putExtra("notification_data", notificationData)
         }
-        sendBroadcast(intent)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
-
     companion object {
         const val ACTION_NEW_NOTIFICATION = "com.skripsi.dosa.NEW_NOTIFICATION"
+        const val ACTION_NEW_DANGEROUS_NOTIFICATION = "com.skripsi.dosa.NEW_DANGEROUS_NOTIFICATION"
         const val CHANNEL_ID = "MY_CHANNEL_ID"
     }
 
