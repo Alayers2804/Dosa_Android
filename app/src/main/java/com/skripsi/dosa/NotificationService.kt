@@ -48,10 +48,13 @@ class NotificationService: NotificationListenerService() {
                         val output = runPrediction(text, ortSession, ortEnvironment)
                         if (output == "Not Spam"){
                            if (notificationData != null) {
-                                onNewNotification(notificationData)
+                                onNewNotification(notificationData, "not_spam")
                             }
                         } else if(output == "Spam") {
                             Log.e("Spam Message", "This is spam and phising")
+                            if (notificationData != null) {
+                                onNewNotification(notificationData, "spam")
+                            }
                             val builder = NotificationCompat.Builder(this, CHANNEL_ID)
                                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
                                 .setContentTitle("Dangerous Message !! Please be aware !!!")
@@ -74,7 +77,7 @@ class NotificationService: NotificationListenerService() {
                         }
                     }
                 } else if (notificationData != null) {
-                        onNewNotification(notificationData)
+                        onNewNotification(notificationData, "not_spam")
                 }
             }
         } else {
@@ -98,13 +101,23 @@ class NotificationService: NotificationListenerService() {
         return START_REDELIVER_INTENT
     }
 
-    private fun onNewNotification(notificationData: NotificationItemModel) {
+    private fun onNewNotification(notificationData: NotificationItemModel, check: String ) {
         Log.i("NotificationService", "New Notification has been posted: $notificationData")
-        val intent = Intent(NotificationService.ACTION_NEW_NOTIFICATION).apply {
-            putExtra("notification_data", notificationData)
+        if(check == "spam"){
+            val intent = Intent(ACTION_NEW_DANGEROUS_NOTIFICATION).apply {
+                putExtra("notification_spam_data", notificationData)
+                Log.i("intent_spam_from_notification_service", notificationData.toString())
+            }
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+        } else if(check == "not_spam"){
+            val intent = Intent(ACTION_NEW_NOTIFICATION).apply {
+                putExtra("notification_data", notificationData)
+            }
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
         }
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+
     }
+
     companion object {
         const val ACTION_NEW_NOTIFICATION = "com.skripsi.dosa.NEW_NOTIFICATION"
         const val ACTION_NEW_DANGEROUS_NOTIFICATION = "com.skripsi.dosa.NEW_DANGEROUS_NOTIFICATION"

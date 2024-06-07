@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,18 +41,21 @@ class SpamMessageFragment : Fragment() {
         setupRecyclerView()
         registerReceiver()
 
-        notificationViewModel.safeMessageItem.observe(viewLifecycleOwner, Observer { notifications ->
-            adapter.updateData(notifications)
+        notificationViewModel.spamMessageItem.observe(viewLifecycleOwner, Observer { notifications ->
+            notifications?.let {
+                adapter.updateData(it)
+                Log.d("Observer_item", it.toString())
+            }
         })
-
     }
 
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        unregisterReceiver()
-//    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        unregisterReceiver()
+        _binding = null
+    }
 
-    private fun setupRecyclerView(){
+    private fun setupRecyclerView() {
         adapter = ItemAdapter(mutableListOf())
         binding.recyclerViewSpamItem.adapter = adapter
         binding.recyclerViewSpamItem.layoutManager = LinearLayoutManager(context)
@@ -60,25 +64,23 @@ class SpamMessageFragment : Fragment() {
     private fun registerReceiver() {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action == NotificationService.ACTION_NEW_NOTIFICATION) {
-                    val notificationData =
-                        intent.getParcelableExtra<NotificationItemModel>("notification_data")
+                if (intent?.action == NotificationService.ACTION_NEW_DANGEROUS_NOTIFICATION) {
+                    val notificationData = intent.getParcelableExtra<NotificationItemModel>("notification_data")
                     notificationData?.let {
-                        adapter.addData(notificationData)
+                        notificationViewModel.addSpamNotification(it)
+                        Log.d("SpamMessageFragment", "Received notification: $notificationData")
                     }
                 }
             }
         }
-        val filter = IntentFilter().apply {
-            addAction(NotificationService.ACTION_NEW_NOTIFICATION)
-        }
-        context?.let {
+        val filter = IntentFilter(NotificationService.ACTION_NEW_DANGEROUS_NOTIFICATION)
+        requireContext().let {
             LocalBroadcastManager.getInstance(it).registerReceiver(broadcastReceiver, filter)
         }
     }
 
     private fun unregisterReceiver() {
-        context?.let {
+        requireContext().let {
             LocalBroadcastManager.getInstance(it).unregisterReceiver(broadcastReceiver)
         }
     }

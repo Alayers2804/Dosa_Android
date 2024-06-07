@@ -44,7 +44,6 @@ class SafeMessageFragment : Fragment() {
         notificationViewModel.safeMessageItem.observe(viewLifecycleOwner, Observer { notifications ->
             notifications?.let {
                 adapter.updateData(it)
-                Log.d("Info data", notifications.toString())
             }
         })
     }
@@ -54,14 +53,13 @@ class SafeMessageFragment : Fragment() {
         unregisterReceiver()
         _binding = null
     }
-
     private fun registerReceiver() {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == NotificationService.ACTION_NEW_NOTIFICATION) {
                     val notificationData = intent.getParcelableExtra<NotificationItemModel>("notification_data")
                     notificationData?.let {
-                        notificationViewModel.addNotification(it)
+                        notificationViewModel.addSafeNotification(it)
                         Log.d("SafeMessageFragment", "Received notification: $notificationData")
                     }
                 }
@@ -72,6 +70,7 @@ class SafeMessageFragment : Fragment() {
             LocalBroadcastManager.getInstance(it).registerReceiver(broadcastReceiver, filter)
         }
     }
+
 
     private fun unregisterReceiver() {
         requireContext().let {
@@ -84,4 +83,5 @@ class SafeMessageFragment : Fragment() {
         binding.recyclerViewItem.adapter = adapter
         binding.recyclerViewItem.layoutManager = LinearLayoutManager(context)
     }
+
 }

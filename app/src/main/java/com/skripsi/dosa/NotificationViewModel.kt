@@ -7,33 +7,25 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 
-class NotificationViewModel @SuppressLint("StaticFieldLeak") constructor(override val lifecycle: Lifecycle) : ViewModel(), LifecycleOwner {
+class NotificationViewModel : ViewModel() {
 
     val safeMessageItem: MutableLiveData<MutableList<NotificationItemModel>> = MutableLiveData()
     val spamMessageItem: MutableLiveData<MutableList<NotificationItemModel>> = MutableLiveData()
 
-    private val _clearData = MutableLiveData<Unit>()
-
     init {
         safeMessageItem.value = mutableListOf()
         spamMessageItem.value = mutableListOf()
-
-        _clearData.observe(this, Observer { clearData() })
     }
 
-    fun addNotification(notification: NotificationItemModel) {
+    fun addSafeNotification(notification: NotificationItemModel) {
         val updatedList = safeMessageItem.value ?: mutableListOf()
         updatedList.add(notification)
         safeMessageItem.value = updatedList
     }
 
-    private fun clearData() {
-        safeMessageItem.value = mutableListOf()
-        spamMessageItem.value = mutableListOf()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        _clearData.value = Unit
+    fun addSpamNotification(notification: NotificationItemModel){
+        val updatedList = spamMessageItem.value ?: mutableListOf()
+        updatedList.add(notification)
+        spamMessageItem.value = updatedList
     }
 }
