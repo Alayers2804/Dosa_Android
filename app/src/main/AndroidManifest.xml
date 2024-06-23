@@ -19,14 +19,6 @@
         android:theme="@style/Theme.Dosa"
         tools:targetApi="31">
         <activity
-            android:name=".SpamMessageActivity"
-            android:exported="true">
-        <intent-filter>
-            <action android:name="com.skripsi.dosa.NEW_DANGEROUS_NOTIFICATION" />
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
-          </activity>
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -44,6 +36,14 @@
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
+            <meta-data
+                android:name="android.service.notification.default_filter_types"
+                android:value="conversations|alerting">
+            </meta-data>
+            <meta-data
+                android:name="android.service.notification.disabled_filter_types"
+                android:value="ongoing|silent">
+            </meta-data>
         </service>
 
         <receiver

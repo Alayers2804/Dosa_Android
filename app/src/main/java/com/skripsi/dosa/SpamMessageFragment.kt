@@ -4,11 +4,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -41,7 +43,7 @@ class SpamMessageFragment : Fragment() {
         setupRecyclerView()
         registerReceiver()
 
-        notificationViewModel.spamMessageItem.observe(viewLifecycleOwner, Observer { notifications ->
+        notificationViewModel.spamNotifications.observe(viewLifecycleOwner, Observer { notifications ->
             notifications?.let {
                 adapter.updateData(it)
                 Log.d("Observer_item", it.toString())
@@ -63,26 +65,27 @@ class SpamMessageFragment : Fragment() {
 
     private fun registerReceiver() {
         broadcastReceiver = object : BroadcastReceiver() {
+            @RequiresApi(Build.VERSION_CODES.TIRAMISU)
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == NotificationService.ACTION_NEW_DANGEROUS_NOTIFICATION) {
-                    val notificationData = intent.getParcelableExtra<NotificationItemModel>("notification_data")
+                    val notificationData = intent.getParcelableExtra("spam_notification_Data", NotificationItemModel::class.java)
                     notificationData?.let {
-                        notificationViewModel.addSpamNotification(it)
+                        notificationViewModel.updateSpamNotifications(it)
                         Log.d("SpamMessageFragment", "Received notification: $notificationData")
                     }
                 }
             }
         }
         val filter = IntentFilter(NotificationService.ACTION_NEW_DANGEROUS_NOTIFICATION)
-        requireContext().let {
+        context?.let {
             LocalBroadcastManager.getInstance(it).registerReceiver(broadcastReceiver, filter)
         }
     }
 
+
     private fun unregisterReceiver() {
-        requireContext().let {
+        context?.let {
             LocalBroadcastManager.getInstance(it).unregisterReceiver(broadcastReceiver)
         }
     }
-
 }
