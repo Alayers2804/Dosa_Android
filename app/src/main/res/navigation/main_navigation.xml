@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/spamMessageFragment">
+    app:startDestination="@id/safeMessageFragment">
 
 
     <fragment
@@ -14,6 +14,7 @@
         <action
             android:id="@+id/action_spamMessageFragment_to_safeMessageFragment"
             app:destination="@id/safeMessageFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/safeMessageFragment"
@@ -23,5 +24,17 @@
         <action
             android:id="@+id/action_safeMessageFragment_to_spamMessageFragment"
             app:destination="@id/spamMessageFragment" />
+        <action
+            android:id="@+id/action_safeMessageFragment_to_detailMessageFragment"
+            app:destination="@id/detailMessageFragment">
+            <argument
+                android:name="tag"
+                app:argType="string" />
+        </action>
     </fragment>
+    <fragment
+        android:id="@+id/detailMessageFragment"
+        android:name="com.skripsi.dosa.DetailMessageFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" />
 </navigation>

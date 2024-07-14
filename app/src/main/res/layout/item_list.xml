@@ -1,37 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
-    android:layout_marginHorizontal="10dp">
+    app:cardUseCompatPadding="true"
+    app:cardElevation="5dp"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <ImageView
+            android:padding="5dp"
+            android:id="@+id/image_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="User Image"
+            android:src="@drawable/baseline_account_circle_24"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/txt_userName"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/txt_Content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="User android"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            app:layout_constraintTop_toBottomOf="@id/txt_userName"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textAlignment="textStart"
+            android:id="@+id/txt_userName"
+            android:layout_width="200dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="4dp"
+            android:text="User android"
+            app:layout_constraintStart_toEndOf="@id/image_view"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/txt_Content"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="gara gara banyak whitespacenya atau bagaimana? terus perlu masukkin ke dataset 1 message ini semua ga biar ga dianggap spam phising?"/>
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="3dp"
+            android:text="gara gara banyak whitespacenya atau bagaimana? terus perlu masukkin ke dataset 1 message ini semua ga biar ga dianggap spam phising?"
+            android:textAlignment="textStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/image_view"
+            app:layout_constraintTop_toBottomOf="@id/txt_userName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

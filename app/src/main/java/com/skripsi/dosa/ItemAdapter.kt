@@ -8,7 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 
-class ItemAdapter(private var dataList: MutableList<NotificationItemModel>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter(
+    private var dataList: MutableList<NotificationItemModel>,
+    private val onClick: (String) -> Unit
+) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_list, parent, false)
@@ -21,8 +24,11 @@ class ItemAdapter(private var dataList: MutableList<NotificationItemModel>) : Re
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = dataList[position]
-        holder.userView.text = item.title
-        holder.contentView.text = item.text
+        holder.userView.text = item.text
+        holder.contentView.text = item.title
+        holder.itemView.setOnClickListener {
+            onClick(item.tag ?: "")
+        }
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -31,15 +37,11 @@ class ItemAdapter(private var dataList: MutableList<NotificationItemModel>) : Re
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addData(notificationData: NotificationItemModel) {
-        dataList.add(notificationData)
-        notifyItemInserted(dataList.size - 1)
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
     fun updateData(newDataList: List<NotificationItemModel>) {
-        dataList.clear()
-        dataList.addAll(newDataList)
-        notifyDataSetChanged()
+        if (dataList != newDataList) {
+            dataList.clear()
+            dataList.addAll(0,newDataList)
+            notifyDataSetChanged()
+        }
     }
 }
