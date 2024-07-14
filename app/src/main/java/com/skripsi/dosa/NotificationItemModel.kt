@@ -8,7 +8,14 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "notifications")
-data class NotificationItemModel(val id:Long, val tag: String, @PrimaryKey val title: String, val text: String?, val postTime: String?, val packageName: String?, var spam: Boolean) :
+data class NotificationItemModel(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
+    var tag: String? = null,
+    val title: String? = null,
+    val text: String? = null,
+    val postTime: String?,
+    val packageName: String?
+) :
     Parcelable {
     @RequiresApi(Build.VERSION_CODES.Q)
     constructor(parcel: Parcel) : this(
@@ -18,7 +25,6 @@ data class NotificationItemModel(val id:Long, val tag: String, @PrimaryKey val t
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readBoolean()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

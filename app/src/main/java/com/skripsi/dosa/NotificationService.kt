@@ -7,56 +7,52 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
+import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import kotlinx.coroutines.DelicateCoroutinesApi
-import java.net.IDN
-import java.text.SimpleDateFormat
 import java.time.LocalTime
-import java.util.Date
 
 
 class NotificationService : NotificationListenerService() {
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("SimpleDateFormat")
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         super.onNotificationPosted(sbn)
         val extras = sbn?.notification?.extras
-        val id = notificationIdCounter++
         val tag = sbn?.tag.toString()
-        val title = extras?.getString("android.title") ?: "test"
-        val text = extras?.getCharSequence("android.text").toString()
+        val title = extras?.getString("android.title")
+        val text = extras?.getString("android.text")
         val time = LocalTime.now()
         val packageName = sbn?.packageName
         val notificationData =
             NotificationItemModel(
-                id,
+                id = 0,
                 tag,
-                title,
                 text,
+                title,
                 time.toString(),
                 packageName,
-                spam = false
             )
         val registerEx = Regex(util.regstr)
 //        val postedTime = sbn?.postTime ?: 0
 //        val notificationAge = System.currentTimeMillis() - postedTime
         if (sbn!!.packageName == "com.whatsapp.w4b" || sbn.packageName == "com.whatsapp") {
             if (sbn.tag != null) {
-                if (notificationData.title.let { registerEx.matches(it) }) {
+                if (notificationData.text.let { registerEx.matches(it.toString()) }) {
                     val ortEnvironment = OrtEnvironment.getEnvironment()
                     val ortSession = createORTSession(ortEnvironment)
-                    val output = runPrediction(notificationData.text!!, ortSession, ortEnvironment)
+                    val output = runPrediction(notificationData.title!!, ortSession, ortEnvironment)
                     if (output == "Not Spam") {
                         onNewNotification(notificationData)
                     } else if (output == "Spam") {
                         Log.e("Spam Message", "This is spam and phising")
-                        notificationData.spam = true
                         onSpamNewNotification(notificationData)
-                        postNotification(notificationData.text)
+                        postNotification(notificationData.title)
                     }
 
                 } else {
@@ -80,7 +76,7 @@ class NotificationService : NotificationListenerService() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
-    private fun onSpamNewNotification(notificationData: NotificationItemModel){
+    private fun onSpamNewNotification(notificationData: NotificationItemModel) {
         val intent = Intent(ACTION_NEW_DANGEROUS_NOTIFICATION).apply {
             putExtra("spam_notification_Data", notificationData)
         }
@@ -132,6 +128,6 @@ class NotificationService : NotificationListenerService() {
         const val ACTION_NEW_DANGEROUS_NOTIFICATION = "com.skripsi.dosa.NEW_DANGEROUS_NOTIFICATION"
         const val CHANNEL_ID = "MY_CHANNEL_ID"
         var LISTENER_CONNECTED = false
-        var notificationIdCounter: Long = 0
+
     }
 }
