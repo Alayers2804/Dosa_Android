@@ -24,8 +24,8 @@ class ItemAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = dataList[position]
-        holder.userView.text = item.text
-        holder.contentView.text = item.title
+        holder.userView.text = item.title
+        holder.contentView.text = item.text
         holder.itemView.setOnClickListener {
             onClick(item.tag ?: "")
         }

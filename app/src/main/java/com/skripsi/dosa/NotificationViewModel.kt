@@ -20,26 +20,13 @@ class NotificationViewModel(application: Application) : AndroidViewModel(applica
     private val _spamNotifications = MutableLiveData<List<NotificationItemModel>>()
     val spamNotifications: LiveData<List<NotificationItemModel>> = _spamNotifications
 
-
     private val notificationDao = AppDatabase.getDatabase(application).notificationDao()
 
     init {
         safeMessageItem
         fetchLatestNotificationsByTag()
-//        fetchAllSafeNotifications()
         spamNotifications
     }
-
-
-//    private fun fetchAllSafeNotifications() {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            try {
-//                val notifications = notificationDao.getNotificationItems()
-//            } catch (e: Exception) {
-//                Log.e("NotificationViewModel", "Error fetching safe notifications", e)
-//            }
-//        }
-//    }
 
     fun addSafeNotification(notification: NotificationItemModel) {
         viewModelScope.launch(Dispatchers.IO) {

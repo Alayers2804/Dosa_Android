@@ -42,7 +42,6 @@ class SafeMessageFragment : Fragment() {
         ) { notifications ->
             notifications?.let {
                 adapter.updateData(it)
-                Log.i("Updated data safe message fragment", it.toString())
             }
         }
     }

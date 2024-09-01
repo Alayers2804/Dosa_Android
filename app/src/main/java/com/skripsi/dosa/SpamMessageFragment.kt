@@ -43,7 +43,6 @@ class SpamMessageFragment : Fragment() {
             Observer { notifications ->
                 notifications?.let {
                     adapter.updateData(it)
-                    Log.d("Observer_item", it.toString())
                 }
             })
     }
