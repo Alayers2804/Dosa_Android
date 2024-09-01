@@ -167,20 +167,17 @@ class MainActivity : AppCompatActivity() {
         broadcastReceiver = object : BroadcastReceiver() {
             @RequiresApi(Build.VERSION_CODES.TIRAMISU)
             override fun onReceive(context: Context?, intent: Intent?) {
-                Log.d("MainActivity", "Broadcast received: ${intent?.action}")
                 if (intent?.action == NotificationService.ACTION_NEW_NOTIFICATION) {
                     val notificationData =
                         intent.getParcelableExtra<NotificationItemModel>("notification_data")
                     notificationData?.let {
                         notificationViewModel.addSafeNotification(it)
-                        Log.d("MainActivity", "Received notification: $notificationData")
                     }
                 } else if (intent?.action == NotificationService.ACTION_NEW_DANGEROUS_NOTIFICATION) {
                     val notificationData =
                         intent.getParcelableExtra<NotificationItemModel>("spam_notification_Data")
                     notificationData?.let {
                         notificationViewModel.updateSpamNotifications(it)
-                        Log.d("MainActivity", "Received dangerous notification: $notificationData")
                     }
                 }
             }
